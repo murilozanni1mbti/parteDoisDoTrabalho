@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Produtos - Web 03MB</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header>
+      <h1>Produtos</h1>
+      <nav>
+        <a href="/index.html">Home</a>
+        <a href="/products.html">Produtos</a>
+        <a href="/add.html">Cadastrar Produto</a>
+      </nav>
+    </header>
+    <main>
+      <section id="list">
+        <p>Carregando produtos...</p>
+      </section>
+    </main>
+
+    <script>
+      async function load() {
+        const el = document.getElementById('list');
+        try {
+          const res = await fetch('/api/products');
+          const data = await res.json();
+          if (!Array.isArray(data)) throw new Error('Resposta inválida');
+          if (data.length === 0) {
+            el.innerHTML = '<p>Nenhum produto cadastrado.</p>';
+            return;
+          }
+          const rows = data.map(p => `
+            <tr>
+              <td>${p.id}</td>
+              <td>${escapeHtml(p.name)}</td>
+              <td>R$ ${Number(p.price).toFixed(2)}</td>
+              <td>${escapeHtml(p.description || '')}</td>
+            </tr>
+          `).join('');
+          el.innerHTML = `
+            <table>
+              <thead><tr><th>ID</th><th>Nome</th><th>Preço</th><th>Descrição</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          `;
+        } catch (err) {
+          el.innerHTML = '<p>Erro ao carregar produtos.</p>';
+          console.error(err);
+        }
+      }
+
+      function escapeHtml(str) {
+        return str.replace(/[&<>"']/g, function(m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[m]; });
+      }
+
+      window.addEventListener('load', load);
+    </script>
+  </body>
+</html>

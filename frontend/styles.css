@@ -1,0 +1,11 @@
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;color:#222}
+header{background:#0b74da;color:#fff;padding:12px}
+header h1{margin:0}
+nav{margin-top:8px}
+nav a{color:#fff;margin-right:12px;text-decoration:none}
+main{padding:16px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border:1px solid #ddd;text-align:left}
+form label{display:block;margin-bottom:8px}
+button{padding:8px 12px;background:#0b74da;color:#fff;border:none}
+#msg{margin-top:12px;color:green}
