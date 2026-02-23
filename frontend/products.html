@@ -38,11 +38,12 @@
               <td>${escapeHtml(p.name)}</td>
               <td>R$ ${Number(p.price).toFixed(2)}</td>
               <td>${escapeHtml(p.description || '')}</td>
+              <td><button class="delete-btn" data-id="${p.id}">Excluir</button></td>
             </tr>
           `).join('');
           el.innerHTML = `
             <table>
-              <thead><tr><th>ID</th><th>Nome</th><th>Preço</th><th>Descrição</th></tr></thead>
+              <thead><tr><th>ID</th><th>Nome</th><th>Preço</th><th>Descrição</th><th>Ações</th></tr></thead>
               <tbody>${rows}</tbody>
             </table>
           `;
@@ -57,6 +58,28 @@
       }
 
       window.addEventListener('load', load);
+
+      // delegação de eventos para o botão de exclusão
+      document.getElementById('list').addEventListener('click', async (e) => {
+        if (!e.target.matches('.delete-btn')) return;
+        const id = e.target.dataset.id;
+        if (!id) return;
+        if (!confirm('Deseja realmente apagar este produto?')) return;
+        try {
+          const res = await fetch('/api/products/' + id, { method: 'DELETE' });
+          if (!res.ok) {
+            let errText = res.statusText;
+            try { const errJson = await res.json(); errText = errJson.error || JSON.stringify(errJson); } catch (_) {}
+            alert('Erro ao apagar: ' + (errText || res.status));
+            return;
+          }
+          alert('Produto apagado com sucesso');
+          load();
+        } catch (err) {
+          alert('Erro ao apagar: ' + (err.message || err));
+          console.error(err);
+        }
+      });
     </script>
   </body>
 </html>

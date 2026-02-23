@@ -8,4 +8,7 @@ table{width:100%;border-collapse:collapse}
 th,td{padding:8px;border:1px solid #ddd;text-align:left}
 form label{display:block;margin-bottom:8px}
 button{padding:8px 12px;background:#0b74da;color:#fff;border:none}
+
+/* botão de exclusão vermelho */
+button.delete-btn{background:#d9534f}
 #msg{margin-top:12px;color:green}

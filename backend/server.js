@@ -35,6 +35,21 @@ app.post('/api/products', (req, res) => {
   stmt.finalize();
 });
 
+// rota para deletar um produto pelo id
+app.delete('/api/products/:id', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'ID inválido' });
+  }
+  db.run('DELETE FROM products WHERE id = ?', [id], function (err) {
+    if (err) return res.status(500).json({ error: err.message });
+    if (this.changes === 0) {
+      return res.status(404).json({ error: 'Produto não encontrado' });
+    }
+    res.json({ success: true });
+  });
+});
+
 // Servir frontend estático (pasta ../frontend)
 const frontendPath = path.join(__dirname, '..', 'frontend');
 app.use(express.static(frontendPath));
