@@ -7,8 +7,30 @@ main{padding:16px}
 table{width:100%;border-collapse:collapse}
 th,td{padding:8px;border:1px solid #ddd;text-align:left}
 form label{display:block;margin-bottom:8px}
-button{padding:8px 12px;background:#0b74da;color:#fff;border:none}
+button{padding:8px 12px;background:#0b74da;color:#fff;border:none;border-radius:5px}
+
+/* ensure other action buttons also follow rounding */
+button.delete-btn, button.edit-btn{border-radius:5px}
 
 /* botão de exclusão vermelho */
 button.delete-btn{background:#d9534f}
 #msg{margin-top:12px;color:green}
+
+/* centering for add page */
+body.add-page main{display:flex;justify-content:center;align-items:center;min-height:60vh}
+body.add-page form{width:320px}
+
+/* theme toggle support */
+#theme-toggle{position:absolute;top:16px;right:16px;padding:8px;font-size:1em;border-radius:50%;width:36px;height:36px;text-align:center;line-height:20px;background:#fff;color:#000;border:1px solid #ccc;cursor:pointer}
+#theme-toggle:hover{background:#f0f0f0}
+#theme-toggle:focus{outline:none}
+#theme-toggle.dark{background:#333;color:#fff;border:1px solid #444}
+
+/* dark mode styles */
+body.dark-theme{background:#121212;color:#eee}
+body.dark-theme header{background:#222;color:#fff}
+body.dark-theme nav a{color:#fff}
+body.dark-theme table{border-color:#444}
+body.dark-theme th,body.dark-theme td{border:1px solid #444}
+body.dark-theme button{background:#0b74da;color:#fff}
+body.dark-theme button.delete-btn{background:#d9534f}

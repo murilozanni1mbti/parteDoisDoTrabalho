@@ -14,6 +14,7 @@
         <a href="/products.html">Produtos</a>
         <a href="/add.html">Cadastrar Produto</a>
       </nav>
+      <button id="theme-toggle">Tema escuro</button>
     </header>
     <main>
       <section id="list">
@@ -38,7 +39,10 @@
               <td>${escapeHtml(p.name)}</td>
               <td>R$ ${Number(p.price).toFixed(2)}</td>
               <td>${escapeHtml(p.description || '')}</td>
-              <td><button class="delete-btn" data-id="${p.id}">Excluir</button></td>
+              <td>
+                <button class="edit-btn" data-id="${p.id}">Editar</button>
+                <button class="delete-btn" data-id="${p.id}">Excluir</button>
+              </td>
             </tr>
           `).join('');
           el.innerHTML = `
@@ -61,6 +65,13 @@
 
       // delegação de eventos para o botão de exclusão
       document.getElementById('list').addEventListener('click', async (e) => {
+        if (e.target.matches('.edit-btn')) {
+          const id = e.target.dataset.id;
+          if (id) {
+            window.location.href = '/edit.html?id=' + id;
+          }
+          return;
+        }
         if (!e.target.matches('.delete-btn')) return;
         const id = e.target.dataset.id;
         if (!id) return;
@@ -80,6 +91,36 @@
           console.error(err);
         }
       });
+    </script>
+
+    <script>
+      (function(){
+        const btn = document.getElementById('theme-toggle');
+        function updateButton(theme){
+          if(!btn) return;
+          if(theme==='dark'){
+            btn.textContent = '☀';
+            btn.classList.add('dark');
+          } else {
+            btn.textContent = '☾';
+            btn.classList.remove('dark');
+          }
+        }
+        function applyTheme(theme){
+          if(theme==='dark') document.body.classList.add('dark-theme');
+          else document.body.classList.remove('dark-theme');
+          updateButton(theme);
+        }
+        function toggle(){
+          const current = document.body.classList.contains('dark-theme') ? 'dark':'light';
+          const next = current==='dark'?'light':'dark';
+          localStorage.setItem('theme', next);
+          applyTheme(next);
+        }
+        if(btn) btn.addEventListener('click', toggle);
+        const stored = localStorage.getItem('theme') || 'light';
+        applyTheme(stored);
+      })();
     </script>
   </body>
 </html>

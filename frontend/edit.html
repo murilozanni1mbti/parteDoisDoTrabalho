@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Cadastrar Produto - Web 03MB</title>
+    <title>Editar Produto - Web 03MB</title>
     <link rel="stylesheet" href="/styles.css">
   </head>
-  <body class="add-page">
+  <body>
     <header>
-      <h1>Cadastrar Produto</h1>
+      <h1>Editar Produto</h1>
       <nav>
         <a href="/index.html">Home</a>
         <a href="/products.html">Produtos</a>
@@ -21,28 +21,64 @@
         <label>Nome:<br><input name="name" required></label><br>
         <label>Preço:<br><input name="price" type="number" step="0.01" value="0"></label><br>
         <label>Descrição:<br><textarea name="description"></textarea></label><br>
-        <button type="submit">Cadastrar</button>
+        <button type="submit">Salvar</button>
       </form>
       <div id="msg"></div>
     </main>
 
     <script>
+      function getId() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('id');
+      }
+
+      async function loadProduct() {
+        const id = getId();
+        const msg = document.getElementById('msg');
+        if (!id) {
+          msg.textContent = 'ID do produto não fornecido';
+          msg.style.color = 'red';
+          return;
+        }
+        try {
+          const res = await fetch('/api/products/' + encodeURIComponent(id));
+          if (!res.ok) {
+            let errText = res.statusText;
+            try { const errJson = await res.json(); errText = errJson.error || JSON.stringify(errJson); } catch(_){}
+            msg.textContent = 'Erro ao carregar: ' + (errText || res.status);
+            msg.style.color = 'red';
+            return;
+          }
+          const data = await res.json();
+          const f = document.getElementById('form');
+          f.name.value = data.name || '';
+          f.price.value = Number(data.price || 0).toFixed(2);
+          f.description.value = data.description || '';
+        } catch (err) {
+          msg.textContent = 'Erro ao carregar: ' + (err.message || err);
+          msg.style.color = 'red';
+          console.error(err);
+        }
+      }
+
       document.getElementById('form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const f = e.target;
         const btn = f.querySelector('button[type="submit"]');
+        const id = getId();
+        const msg = document.getElementById('msg');
+        msg.style.color = '';
+        if (!id) { msg.textContent = 'ID do produto não fornecido'; msg.style.color = 'red'; return; }
         const data = {
           name: f.name.value.trim(),
           price: parseFloat(f.price.value) || 0,
           description: f.description.value.trim()
         };
-        const msg = document.getElementById('msg');
-        msg.style.color = '';
         if (!data.name) { msg.textContent = 'Nome é obrigatório'; msg.style.color = 'red'; return; }
         try {
           if (btn) btn.disabled = true;
-          const res = await fetch('/api/products', {
-            method: 'POST',
+          const res = await fetch('/api/products/' + encodeURIComponent(id), {
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
           });
@@ -53,19 +89,20 @@
             msg.style.color = 'red';
             return;
           }
-          const created = await res.json();
-          msg.textContent = 'Produto cadastrado: ID ' + created.id;
+          const updated = await res.json();
+          msg.textContent = 'Produto atualizado com sucesso.';
           msg.style.color = 'green';
-          f.reset();
           setTimeout(() => location.href = '/products.html', 800);
         } catch (err) {
-          msg.textContent = 'Erro ao cadastrar: ' + (err.message || err);
+          msg.textContent = 'Erro ao atualizar: ' + (err.message || err);
           msg.style.color = 'red';
           console.error(err);
         } finally {
           if (btn) btn.disabled = false;
         }
       });
+
+      window.addEventListener('load', loadProduct);
     </script>
 
     <script>

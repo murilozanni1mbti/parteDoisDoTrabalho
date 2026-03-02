@@ -14,11 +14,42 @@
         <a href="/products.html">Produtos</a>
         <a href="/add.html">Cadastrar Produto</a>
       </nav>
+      <button id="theme-toggle">Tema escuro</button>
     </header>
     <main>
       <h2>Bem-vindo(a)</h2>
       <p>Projeto para a aula — backend + frontend prontos para uso.</p>
       <p>Use o menu para listar e cadastrar produtos.</p>
     </main>
+
+    <script>
+      (function(){
+        const btn = document.getElementById('theme-toggle');
+        function updateButton(theme){
+          if(!btn) return;
+          if(theme==='dark'){
+            btn.textContent = '☀';
+            btn.classList.add('dark');
+          } else {
+            btn.textContent = '☾';
+            btn.classList.remove('dark');
+          }
+        }
+        function applyTheme(theme){
+          if(theme==='dark') document.body.classList.add('dark-theme');
+          else document.body.classList.remove('dark-theme');
+          updateButton(theme);
+        }
+        function toggle(){
+          const current = document.body.classList.contains('dark-theme') ? 'dark':'light';
+          const next = current==='dark'?'light':'dark';
+          localStorage.setItem('theme', next);
+          applyTheme(next);
+        }
+        if(btn) btn.addEventListener('click', toggle);
+        const stored = localStorage.getItem('theme') || 'light';
+        applyTheme(stored);
+      })();
+    </script>
   </body>
 </html>
